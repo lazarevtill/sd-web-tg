@@ -23,7 +23,7 @@ WORKDIR /app
 COPY --from=builder /app /app
 
 # Expose port 80
-EXPOSE 80
+EXPOSE 8080
 
 # Install curl and netbird
 RUN apt-get update && apt-get install -y curl sudo && \
