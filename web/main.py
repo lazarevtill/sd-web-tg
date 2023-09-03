@@ -1,52 +1,70 @@
-from flask import Flask, render_template, request, jsonify
-from minio import Minio
+from flask import Flask, render_template, jsonify, request
+import minio
+import redis
+import base64
+import logging
 
 app = Flask(__name__)
 
-# Set your MinIO credentials
+# MinIO Configuration
 MINIO_ENDPOINT = 'synology.netbird.cloud:9000'
 MINIO_ACCESS_KEY = 'web'
 MINIO_SECRET_KEY = '3dMYRxBBGorsj0GBG6V4OX4phQQggcaGmj2EhCFX'
 MINIO_BUCKET_NAME = 'webpage'
 
-# Number of images to load per page
-page_size = 12
+# Redis Configuration
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB = 0
+
+# Initialize MinIO client
+minio_client = minio.Minio(
+    MINIO_ENDPOINT,
+    access_key=MINIO_ACCESS_KEY,
+    secret_key=MINIO_SECRET_KEY,
+    secure=False,
+)
+
+# Initialize Redis client
+redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
+
+# Number of images per page
+page_size = 10
+
+# Configure logging
+logging.basicConfig(level=logging.ERROR)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    page = int(request.args.get('page', 1))
+    offset = (page - 1) * page_size
+    images = get_images_from_minio(offset, page_size)
+    return render_template('index.html', images=images, page=page)
 
-@app.route('/load_images', methods=['POST'])
-def load_images():
-    minio_client = Minio(
-        MINIO_ENDPOINT,
-        access_key=MINIO_ACCESS_KEY,
-        secret_key=MINIO_SECRET_KEY,
-        secure=False
-    )
+@app.route('/images')
+def get_images():
+    page = int(request.args.get('page', 1))
+    offset = (page - 1) * page_size
+    images = get_images_from_minio(offset, page_size)
+    return jsonify(images)
 
-    # Get the page number from the request
-    page = int(request.json.get('page', 1))
-
-    # Retrieve a page of objects in the bucket
-    objects = minio_client.list_objects(MINIO_BUCKET_NAME, recursive=True)
-    start_index = (page - 1) * page_size
-    end_index = start_index + page_size
-    objects = list(objects)[start_index:end_index]
-
-    # Extract the URLs of the image objects
-    image_urls = []
-    for obj in objects:
-        if obj.object_name.endswith('.jpg') or obj.object_name.endswith('.png'):
-            image_url = minio_client.presigned_get_object(MINIO_BUCKET_NAME, obj.object_name)
-            # print("Image URL:", image_url)  # Debugging line
-            image_urls.append(image_url)
-
-
-    # Calculate the next page number
-    next_page = page + 1 if len(objects) == page_size else None
-
-    return jsonify({'image_urls': image_urls, 'next_page': next_page})
+def get_images_from_minio(offset, limit):
+    images = []
+    for i in range(offset, offset + limit):
+        image_path = f'image_{i}.jpg'
+        try:
+            image_data = redis_client.get(image_path)
+            if image_data is not None:
+                images.append(base64.b64encode(image_data).decode('utf-8'))
+            else:
+                image_data = minio_client.get_object(MINIO_BUCKET_NAME, image_path).read()
+                redis_client.set(image_path, image_data)
+                images.append(base64.b64encode(image_data).decode('utf-8'))
+        except Exception as e:
+            error_message = f"Error fetching image {image_path}: {str(e)}"
+            logging.error(error_message)
+            images.append(error_message)
+    return images
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)

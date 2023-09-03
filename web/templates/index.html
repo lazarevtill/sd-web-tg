@@ -1,18 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>S3 Image Viewer</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <meta charset="UTF-8">
+    <title>Image Gallery</title>
 </head>
 <body>
-    <h1>S3 Image Viewer</h1>
-    <div class="image-container"></div>
-    <div id="loading-message"></div>
-    <button id="load-more-button">Load More</button>
-    <div id="modal">
-        <img id="modal-image">
+    <h1>Image Gallery</h1>
+    <div id="image-grid">
+        {% for image_data in images %}
+        <img src="data:image/jpeg;base64,{{ image_data }}" alt="Image">
+        {% endfor %}
     </div>
+    <button id="load-more">Load More</button>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
