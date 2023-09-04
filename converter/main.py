@@ -6,13 +6,13 @@ from minio.error import ResponseError
 from PIL import Image
 
 # MinIO configuration
-MINIO_ENDPOINT = 'your_minio_endpoint'
-MINIO_ACCESS_KEY = 'your_access_key'
-MINIO_SECRET_KEY = 'your_secret_key'
+MINIO_ENDPOINT = 'synology.netbird.cloud:9000'
+MINIO_ACCESS_KEY = 'converter'
+MINIO_SECRET_KEY = '5dOgcCgxWhmYdfVlHQKLIsBna8FKhvNCOkXJ8Wam'
 
 # Source and destination bucket names
-SOURCE_BUCKET = 'source_bucket'
-DESTINATION_BUCKET = 'destination_bucket'
+SOURCE_BUCKET = 'sd-new'
+DESTINATION_BUCKET = 'synology-b'
 
 
 def create_bucket_if_not_exists(minio_client, bucket_name):
