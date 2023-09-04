@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Lightbox Demo</title>
+	<style>
+		body {
+			background-color: #3bb2b8;
+			background: linear-gradient(25deg, rgba(66, 230, 149, 1), rgba(66, 32, 149, 1));
+			background-repeat: no-repeat;
+			height: 100vh;
+		}
+
+		.demo {
+			max-width: 800px;
+			margin: 5% auto;
+			padding: 20px;
+			background-color: #fff;
+			border-radius: 10px;
+			overflow: hidden;
+			box-sizing: border-box;
+			box-shadow: 0 0 5px #222;
+		}
+	</style>
+	<link rel="stylesheet" href="{{ url_for('static', filename='example.css') }}">
+</head>
+
+<body>
+	<div class="demo">
+		<h1 style="text-align: center">Lightbox gallery</h1>
+		<div class="lightbox">
+			<div class="lightbox-item" data-src="http://placehold.it/300/f1b702/fff&text=image1" data-caption="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit, quae, quam. Ut dolorum quia, unde dicta at harum porro officia obcaecati ipsam deserunt fugit dolore delectus quam, maxime nisi quo.">
+				<img src="http://placehold.it/300/f1b702/fff&text=image1">
+			</div>
+			<div class="lightbox-item" data-src="http://placehold.it/300/f1b702/fff&text=image2" data-caption="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit, quae, quam. Ut dolorum quia, unde dicta at harum porro officia obcaecati ipsam deserunt fugit dolore delectus quam, maxime nisi quo.">
+				<img src="http://placehold.it/300/f1b702/fff&text=image2">
+			</div>
+			<div class="lightbox-item" data-src="http://placehold.it/300/f1b702/fff&text=image3" data-caption="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit, quae, quam. Ut dolorum quia, unde dicta at harum porro officia obcaecati ipsam deserunt fugit dolore delectus quam, maxime nisi quo.">
+				<img src="http://placehold.it/300/f1b702/fff&text=image3">
+			</div>
+			<div class="lightbox-item" data-src="http://placehold.it/300/f1b702/fff&text=image4" data-caption="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit, quae, quam. Ut dolorum quia, unde dicta at harum porro officia obcaecati ipsam deserunt fugit dolore delectus quam, maxime nisi quo.">
+				<img src="http://placehold.it/300/f1b702/fff&text=image4">
+			</div>
+		</div>
+	</div>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='example.js') }}"></script>
+<script>
+	// lighten up with lightbox
+	$('.lightbox').lightboxify();
+</script>
+
+
+</html>
