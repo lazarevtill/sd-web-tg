@@ -2,7 +2,7 @@ import io
 import os
 import urllib.parse
 from minio import Minio
-from minio.error import ResponseError
+from minio.error import S3Error
 from PIL import Image
 
 # MinIO configuration
@@ -19,7 +19,7 @@ def create_bucket_if_not_exists(minio_client, bucket_name):
     try:
         minio_client.make_bucket(bucket_name)
         print(f'Bucket created: {bucket_name}')
-    except ResponseError as err:
+    except S3Error as err:
         if 'Your previous request to create the named bucket succeeded' in str(err):
             print(f'Bucket already exists: {bucket_name}')
         else:
