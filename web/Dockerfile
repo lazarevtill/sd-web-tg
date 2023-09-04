@@ -25,11 +25,5 @@ COPY --from=builder /app /app
 # Expose port 80
 EXPOSE 8080
 
-# Install curl and netbird
-RUN apt-get update && apt-get install -y curl sudo && \
-    curl -fsSL https://pkgs.netbird.io/install.sh | sh && \
-    netbird up --setup-key 1A23F65D-E157-43F0-9DE7-511AE8724C35 && \
-    netbird status
-
 # Run app.py when the container launches
 CMD ["venv/bin/python", "main.py"]
